@@ -1,10 +1,8 @@
-import { nanoid } from "nanoid";
 import {
   createContactSchema,
   updateContactSchema,
 } from "../schemas/contactsSchemas.js";
 import contactsService from "../services/contactsServices.js";
-import validateBody from "../helpers/validateBody.js";
 
 export const getAllContacts = async (req, res) => {
   const allContacts = await contactsService.listContacts();
@@ -48,6 +46,14 @@ export const updateContact = async (req, res) => {
     res.status(400).json({ message: "Body must have at least one field" });
     return;
   }
+
+  const { error } = updateContactSchema.validate(req.body);
+
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    return;
+  }
+
   const editedContact = await contactsService.editContact(
     req.params.id,
     req.body

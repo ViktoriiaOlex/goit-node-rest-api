@@ -31,10 +31,10 @@ async function getContactById(contactId) {
   return contact;
 }
 
-async function addContact(name, email, phone) {
+async function addContact({ name, email, phone }) {
   const contacts = await listContacts();
 
-  const newContact = { ...{ name, email, phone }, id: crypto.randomUUID() };
+  const newContact = { id: crypto.randomUUID(), name, email, phone };
 
   contacts.push(newContact);
 
@@ -74,6 +74,7 @@ async function updateContact(contactId, updateData) {
 
 const contactsService = {
   listContacts,
+  getContacts,
   getContactById,
   removeContact,
   addContact,
