@@ -20,7 +20,7 @@ export const getOneContact = async (req, res) => {
 };
 
 export const deleteContact = async (req, res) => {
-  const deletedContact = await contactsService.removeContactById(req.params.id);
+  const deletedContact = await contactsService.removeContact(req.params.id);
   if (deleteContact === null) {
     res.status(404).json({ message: "Contact not found" });
     return;
