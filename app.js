@@ -9,7 +9,7 @@ import { checkToken } from "./middlewares/checkTokenMiddleware.js";
 
 const DB_KEY = process.env.DB_KEY;
 
-const app = express();
+export const app = express();
 
 app.use(morgan("tiny"));
 app.use(cors());
