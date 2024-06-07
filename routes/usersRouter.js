@@ -5,12 +5,14 @@ import {
   registerUser,
   getUserData,
   updateSubscription,
+  setNewAvatar,
 } from "../controllers/usersController.js";
 import {
   UserDataValidation,
   subscriptionTypeValidation,
 } from "../middlewares/userValidationMiddleware.js";
 import { checkToken } from "../middlewares/checkTokenMiddleware.js";
+import uploadAvatars from "../middlewares/uploadAvatars.js";
 
 const usersRouter = express.Router();
 
@@ -23,6 +25,12 @@ usersRouter.patch(
   checkToken,
   subscriptionTypeValidation,
   updateSubscription
+);
+usersRouter.patch(
+  "/avatar",
+  checkToken,
+  uploadAvatars.single("avatar"),
+  setNewAvatar
 );
 
 export default usersRouter;
