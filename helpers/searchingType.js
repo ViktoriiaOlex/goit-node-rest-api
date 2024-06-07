@@ -1,6 +1,6 @@
 import contactsModel from "../schemas/contactsMongooseSchema.js";
 
-const typeOfSearch = (queryParams, ownerId) => {
+const searchingType = (queryParams, ownerId) => {
   if (Object.keys(queryParams).length === 0) {
     return contactsModel.find({ owner: ownerId });
   } else if (
@@ -22,4 +22,4 @@ const typeOfSearch = (queryParams, ownerId) => {
     });
   }
 };
-export default typeOfSearch;
+export default searchingType;
