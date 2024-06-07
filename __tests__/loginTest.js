@@ -11,10 +11,18 @@ describe("loginTest", () => {
     mongoose.disconnect(process.env.DB_TEST_URI);
   });
   test("should return user data", async () => {
-    const response = await supertest(app).post("/api/users/login").send({
-      email: "typ11e@dss.ss",
-      password: "sdssAs1s",
+    // Реєстрація користувача
+    await supertest(app).post("/api/users/register").send({
+      email: "testUser1@gmail.com",
+      password: "123456789Qq",
     });
+
+    // Логін користувача
+    const response = await supertest(app).post("/api/users/login").send({
+      email: "testUser1@gmail.com",
+      password: "123456789Qq",
+    });
+
     console.log(response.body);
 
     expect(response.statusCode).toBe(200);
