@@ -4,9 +4,10 @@ const messageList = {
   403: "Forbidden",
   404: "Not Found",
   409: "Conflict",
+  500: "Internal Error",
 };
 
-const HttpError = (status, message = messageList[status]) => {
+const HttpError = (status = 400, message = messageList[status]) => {
   const error = new Error(message);
   error.status = status;
   return error;

@@ -12,7 +12,9 @@ export const registerUser = async (req, res, next) => {
       password: hashPassword,
       subscription: req.body.subscription || "starter",
     };
+
     const newUser = await userModel.create(newUserData);
+
     res.status(201).send({
       user: { email: newUser.email, subscription: newUser.subscription },
     });
@@ -36,14 +38,17 @@ export const loginUser = async (req, res, next) => {
     const isPassword = await bcrypt.compare(password, isUser.password);
     if (!isPassword) {
       console.log("Incorrect password");
-      return next(HttpError(401, "Email or password is wrong"));
+      return next(HttpError(401, "Email or password is incorrect"));
     }
 
-    const token = jwt.sign({ id: isUser._id, email }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    await userModel.findByIdAndUpdate(isUser._id, { token }, { new: true });
-    res.status(200).send({ token, user: { email, password } });
+    const token = jwt.sign(
+      { id: isUser._id, email: isUser.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    await userModel.findOneAndUpdate(isUser._id, { token }, { new: true });
+    res.status(200).send({ token, user: { email } });
   } catch (error) {
     return next(HttpError(error.status));
   }
@@ -51,9 +56,13 @@ export const loginUser = async (req, res, next) => {
 
 export const logoutUser = async (req, res, next) => {
   try {
-    const user = await userModel.findByIdAndUpdate(req.user.id, {
-      token: null,
-    });
+    const user = await userModel.findOneAndUpdate(
+      req.user.id,
+      {
+        token: null,
+      },
+      { new: true }
+    );
     res.status(204).send();
   } catch (error) {
     return next(HttpError(error.status));
@@ -72,7 +81,7 @@ export const getUserData = async (req, res, next) => {
 
 export const updateSubscription = async (req, res, next) => {
   try {
-    const user = await userModel.findByIdAndUpdate(
+    const user = await userModel.findOneAndUpdate(
       req.user.id,
       {
         subscription: req.body.subscription,

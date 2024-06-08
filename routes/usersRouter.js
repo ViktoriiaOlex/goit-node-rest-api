@@ -19,9 +19,9 @@ usersRouter.post("/login", UserDataValidation, loginUser);
 usersRouter.post("/logout", checkToken, logoutUser);
 usersRouter.get("/current", checkToken, getUserData);
 usersRouter.patch(
-  "/subscription",
-  checkToken,
+  "/",
   subscriptionTypeValidation,
+  checkToken,
   updateSubscription
 );
 

@@ -1,9 +1,10 @@
 import HttpError from "../helpers/HttpError.js";
+import searchingType from "../helpers/searchingType.js";
 import contactsModel from "../schemas/contactsMongooseSchema.js";
 
-async function listContacts() {
+async function listContacts(queryParams, ownerId) {
   try {
-    const listContacts = await contactsModel.find({});
+    const listContacts = await searchingType(queryParams, ownerId);
     return listContacts;
   } catch (error) {
     console.error(error);
@@ -11,9 +12,13 @@ async function listContacts() {
   }
 }
 
-async function getContactById(contactId) {
+async function getContactById(contactId, ownerId) {
   try {
-    const foundedContact = await contactsModel.findById(contactId);
+    const foundedContact = await contactsModel.findOne({
+      _id: contactId,
+      owner: ownerId,
+    });
+
     return foundedContact;
   } catch (error) {
     console.error(error);
@@ -21,9 +26,12 @@ async function getContactById(contactId) {
   }
 }
 
-async function removeContactById(contactId) {
+async function findOneAndUpdate(contactId, ownerId) {
   try {
-    const deletedContact = await contactsModel.findByIdAndDelete(contactId);
+    const deletedContact = await contactsModel.findOneAndDelete({
+      _id: contactId,
+      owner: ownerId,
+    });
     return deletedContact;
   } catch (error) {
     console.error(error);
@@ -31,12 +39,13 @@ async function removeContactById(contactId) {
   }
 }
 
-async function addContact({ name, email, phone, favorite = false }) {
+async function addContact({ name, email, phone, favorite = false, owner }) {
   const newContact = {
     name,
     email,
     phone,
     favorite,
+    owner,
   };
 
   try {
@@ -48,16 +57,17 @@ async function addContact({ name, email, phone, favorite = false }) {
   }
 }
 
-async function editContact(id, newContactData) {
+async function editContact(id, ownerId, newContactData) {
   if (newContactData.favorite === undefined) {
     newContactData = { ...newContactData, favorite: false };
   }
   try {
-    const newContact = await contactsModel.findByIdAndUpdate(
-      id,
+    const newContact = await contactsModel.findOneAndUpdate(
+      { _id: id, owner: ownerId },
       newContactData,
       { new: true }
     );
+
     return newContact;
   } catch (error) {
     console.error(error);
@@ -65,10 +75,10 @@ async function editContact(id, newContactData) {
   }
 }
 
-async function setFavorite(id, favoriteState) {
+async function setFavorite(id, ownerId, favoriteState) {
   try {
-    const editContact = await contactsModel.findByIdAndUpdate(
-      id,
+    const editContact = await contactsModel.findOneAndUpdate(
+      { _id: id, owner: ownerId },
       { favorite: favoriteState },
       { new: true }
     );
@@ -82,7 +92,7 @@ async function setFavorite(id, favoriteState) {
 const contactsService = {
   listContacts,
   getContactById,
-  removeContactById,
+  findOneAndUpdate,
   addContact,
   editContact,
   setFavorite,

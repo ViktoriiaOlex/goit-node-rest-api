@@ -13,7 +13,7 @@ export const checkToken = (req, res, next) => {
     return next(HttpError(401, "Not authorized"));
   }
 
-  jwt.verify(userToken, process.env.TOKEN_SECRET, async (err, tokenData) => {
+  jwt.verify(userToken, process.env.JWT_SECRET, async (err, tokenData) => {
     if (err) {
       return next(HttpError(401, "Not authorized"));
     }
