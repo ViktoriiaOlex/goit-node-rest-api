@@ -26,7 +26,7 @@ async function getContactById(contactId, ownerId) {
   }
 }
 
-async function findOneAndUpdate(contactId, ownerId) {
+async function removeContactById(contactId, ownerId) {
   try {
     const deletedContact = await contactsModel.findOneAndDelete({
       _id: contactId,
@@ -92,7 +92,7 @@ async function setFavorite(id, ownerId, favoriteState) {
 const contactsService = {
   listContacts,
   getContactById,
-  findOneAndUpdate,
+  removeContactById,
   addContact,
   editContact,
   setFavorite,
