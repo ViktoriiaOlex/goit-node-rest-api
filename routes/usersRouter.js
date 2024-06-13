@@ -5,12 +5,19 @@ import {
   registerUser,
   getUserData,
   updateSubscription,
+  setNewAvatar,
+  userVerification,
+  retryVerification,
 } from "../controllers/usersController.js";
+
 import {
   UserDataValidation,
   subscriptionTypeValidation,
 } from "../middlewares/userValidationMiddleware.js";
+
 import { checkToken } from "../middlewares/checkTokenMiddleware.js";
+import uploadAvatars from "../middlewares/uploadAvatars.js";
+import { checkEmail } from "../middlewares/checkEmail.js";
 
 const usersRouter = express.Router();
 
@@ -24,5 +31,14 @@ usersRouter.patch(
   checkToken,
   updateSubscription
 );
+usersRouter.patch(
+  "/avatar",
+  checkToken,
+  uploadAvatars.single("avatar"),
+  setNewAvatar
+);
+
+usersRouter.get("/verification/:verificationKey", userVerification);
+usersRouter.post("/verify", checkEmail, retryVerification);
 
 export default usersRouter;
